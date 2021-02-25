@@ -7,29 +7,11 @@
 <head>
     <meta charset="utf-8">
     <script src="https://libs.baidu.com/jquery/2.0.0/jquery.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 </head>
 
 <body style="height: 100%; margin: 0">
     <div id="container" style="height: 100%"></div>
-
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-    <!-- Uncomment this line if you want to dataTool extension
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/extension/dataTool.min.js"></script>
-        -->
-    <!-- Uncomment this line if you want to use gl extension
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@2/dist/echarts-gl.min.js"></script>
-        -->
-    <!-- Uncomment this line if you want to echarts-stat extension
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat@latest/dist/ecStat.min.js"></script>
-        -->
-    <!-- Uncomment this line if you want to use map
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/map/js/china.js"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/map/js/world.js"></script>
-        -->
-    <!-- Uncomment these two lines if you want to use bmap extension
-        <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=<Your Key Here>"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/extension/bmap.min.js"></script>
-        -->
 
     <script type="text/javascript">
         var dom = document.getElementById("container");
@@ -59,8 +41,7 @@
         // var myChart = echarts.init(document.getElementById('main0'));
 
 		var times = [];    //类别数组（实际用来盛放X轴坐标值）    
-		var open_list = [];
-		var close_list = [];
+		var volume = [];
 		var stock_name;
         var data=[];
         // "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=CARR&interval=5min&apikey=SS1QJFRG4UC64DZP",
@@ -74,14 +55,11 @@
 				for (var x in result[data_text]) {
 					//times.push(x.slice(11));
 					times.push(x);
-					open_list.push(result[data_text][x]["1. open"]);
-					close_list.push(parseFloat(result[data_text][x]["4. close"]));
-                    data.push([parseFloat(result[data_text][x]["1. open"]), parseFloat(result[data_text][x]["4. close"]), parseFloat(result[data_text][x]["3. low"]), parseFloat(result[data_text][x]["2. high"]) ])
-
+                    data.push([parseFloat(result[data_text][x]["1. open"]), parseFloat(result[data_text][x]["4. close"]), parseFloat(result[data_text][x]["3. low"]), parseFloat(result[data_text][x]["2. high"]) ]);
+                    volume.push(parseFloat(result[data_text][x]["5. volume"]) / 1000);
 				};
 				times = times.reverse();
-				open_list = open_list.reverse();
-				close_list= close_list.reverse();
+				volume = volume.reverse();
                 data = data.reverse();
 				stock_name = result["Meta Data"][ "2. Symbol"];
 			}
@@ -104,7 +82,6 @@
             return result;
         }
 
-        var dates = times;
 /*         var dates = rawData.map(function (item) {
             return item[0];
         });
@@ -113,6 +90,9 @@
             return [+item[1], +item[2], +item[5], +item[6]];
         }); */
         var option = {
+            title: {
+                text: stock_name
+            },
             legend: {
                 data: ['日K', 'MA5', 'MA10', 'MA20', 'MA30'],
                 inactiveColor: '#777',
@@ -129,19 +109,43 @@
                     }
                 }
             },
-            xAxis: {
-                type: 'category',
-                data: dates,
-                axisLine: { lineStyle: { color: '#8392A5' } }
-            },
-            yAxis: {
+            xAxis: [
+                {
+                    type: 'category',
+                    data: times,
+                    axisLine: { lineStyle: { color: '#8392A5' } }
+                },
+                {
+                    type: 'category',
+                    gridIndex: 1,
+                }
+            ],
+            yAxis: [
+                {
                 scale: true,
                 axisLine: { lineStyle: { color: '#8392A5' } },
                 splitLine: { show: false }
-            },
-            grid: {
-                bottom: 80
-            },
+                },
+                {
+                scale: true,
+                gridIndex: 1,
+                axisLine: { lineStyle: { color: '#8392A5' } },
+                splitLine: { show: false }
+                },
+            ],
+            grid: [
+                {
+                    left: '10%',
+                    right: '10%',
+                    bottom: 200
+                },
+                {
+                    left: '10%',
+                    right: '10%',
+                    height: 80,
+                    bottom: 80
+                }
+            ],
             dataZoom: [{
                 textStyle: {
                     color: '#8392A5'
@@ -157,9 +161,10 @@
                     }
                 },
                 brushSelect: true
-            }, {
+                }, {
                 type: 'inside'
-            }],
+                }
+            ],
             series: [
                 {
                     type: 'candlestick',
@@ -173,6 +178,27 @@
                     }
                 },
                 {
+                    name: 'volume',
+                    type: 'bar',
+                    xAxisIndex: 1,
+                    yAxisIndex: 1,
+                    data: volume,
+                    smooth: true,
+                    itemStyle: {
+                        normal: {
+                            color: function(params) {
+                                var colorList;
+                                if (data[params.dataIndex][1] > data[params.dataIndex][0] ) {
+                                    colorList = "#F9293E";
+                                } else {
+                                    colorList = "#00aa3b";
+                                }
+                                return colorList;
+                            },
+                        }
+                    }
+                },
+/*                 {
                     name: 'MA5',
                     type: 'line',
                     data: calculateMA(5, data),
@@ -202,7 +228,7 @@
                         width: 1
                     }
                 },
-                {
+                { 
                     name: 'MA30',
                     type: 'line',
                     data: calculateMA(30, data),
@@ -211,7 +237,7 @@
                     lineStyle: {
                         width: 1
                     }
-                }
+                }*/
             ]
         };
 
