@@ -35,9 +35,9 @@
 
 
 		function draw_stock(stock_name, container_name){
-			var dom = document.getElementById(container_name);
-			var myChart = echarts.init(dom);
+			var myChart = echarts.init(document.getElementById(container_name));
 
+			// "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=CARR&interval=5min&apikey=SS1QJFRG4UC64DZP",
 			var url_head = "https://www.alphavantage.co/query?function=";
 			//var url_CFG_FUNC = "TIME_SERIES_INTRADAY";
 			var url_CFG_FUNC = "TIME_SERIES_DAILY";
@@ -54,14 +54,11 @@
 				var data_text = "Time Series (5min)";
 			}
 
-
-			// "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=CARR&interval=5min&apikey=SS1QJFRG4UC64DZP",
 			var times = [];       
 			var volume = [];
 			var stock_name;
 			var data=[];
 
-			
 			$.ajax({
 				type: 'GET',
 				dataType: 'JSON',
