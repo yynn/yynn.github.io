@@ -11,9 +11,18 @@
 </head>
 
 <body style="height: 100%; margin: 0">
-    <div id="container_0" style="height: 50%"></div>
+  	<div id="container_0" style="height: 50%"></div>
     <div id="container_1" style="height: 50%"></div>
-    <div id="container_2" style="height: 50%"></div>
+    <div id="container_2" style="height: 50%"></div> 
+
+<!--  	<div class="mainDiv">  
+		<div id="container_0" class="viceDiv_1">  
+		</div>  
+		<div id="container_1" class="viceDiv_2">  
+		</div>  
+		<div id="container_2" class="viceDiv_3">  
+		</div>  
+	</div>  -->
 
     <script type="text/javascript">
 
@@ -58,6 +67,7 @@
 			var volume = [];
 			var stock_name;
 			var data=[];
+			var data_close=[];
 
 			$.ajax({
 				type: 'GET',
@@ -70,11 +80,13 @@
 						times.push(x);
 						data.push([parseFloat(result[data_text][x]["1. open"]), parseFloat(result[data_text][x]["4. close"]), parseFloat(result[data_text][x]["3. low"]), parseFloat(result[data_text][x]["2. high"]) ]);
 						volume.push(parseFloat(result[data_text][x]["5. volume"]) / 1000);
+						data_close.push(parseFloat(result[data_text][x]["4. close"]));
 					};
 					times = times.reverse();
 					volume = volume.reverse();
 					data = data.reverse();
-					stock_name = result["Meta Data"][ "2. Symbol"];
+					data_close = data_close.reverse();
+					stock_name = result["Meta Data"]["2. Symbol"];
 
 					var option = {
 						title: {
@@ -133,10 +145,9 @@
 								bottom: 80
 							}
 						],
-						dataZoom: [{
-							textStyle: {
-								color: '#8392A5'
-							},
+						dataZoom: [
+							{
+							textStyle: {color: '#8392A5'},
 							handleIcon: 'path://M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
 							dataBackground: {
 								areaStyle: {
@@ -147,15 +158,25 @@
 									color: '#8392A5'
 								}
 							},
-							brushSelect: true
-							}, {
-							type: 'inside',
+							brushSelect: true,
+							rangeMode : 'value',
 							startValue: times.length - 100, 
-							stopValue: times.length
+							endValue: times.length
+							}, 
+							{
+							type: 'inside',
+
 							}
 						],
 						series: [
 							{
+								name: 'value close',
+								type: 'line',
+								data: data_close,
+								smooth: true,
+								showSymbol: false,
+							},
+/* 							{
 								type: 'candlestick',
 								name: '日K',
 								data: data,
@@ -165,7 +186,7 @@
 									borderColor: '#FD1050',
 									borderColor0: '#0CF49B'
 								}
-							},
+							}, */
 							{
 								name: 'volume',
 								type: 'bar',
