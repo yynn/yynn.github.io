@@ -1,18 +1,18 @@
 .mainDiv {  
 float: left;  
-margin-left: 10%;  
-width: 80%;  
+margin-left: 0%;  
+width: 100%;  
 margin-top: 2%;  
-height: 200px;  
-background-color: #FFEBCD;  
+height: 100%;  
+/* background-color: #FFEBCD;   */
   
 }  
   
 .viceDiv_1,.viceDiv_2,.viceDiv_3 {  
 float: left;  
-background-color: #7FFFD4;  
-margin-top: 2% ;  
-margin-left: 2.5%;  
+/* background-color: #7FFFD4;   */
+margin-top: 1% ;  
+margin-left: 1%;  
 width: 30%;  
-height: 150px;  
+height: 100%;  
 }  

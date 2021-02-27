@@ -6,23 +6,24 @@
 
 <head>
 	<meta charset="utf-8">
+	<link href="styles/style.css" rel="stylesheet">
 	<script src="https://libs.baidu.com/jquery/2.0.0/jquery.js"></script>
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 </head>
 
-<body style="height: 100%; margin: 0">
-	<div id="container_0" style="height: 50%"></div>
+<body style="height: 90%; margin: 0">
+<!-- 	<div id="container_0" style="height: 50%"></div>
 	<div id="container_1" style="height: 50%"></div>
 	<div id="container_2" style="height: 50%"></div>
-
-	<!--  	<div class="mainDiv">  
+ -->
+	 	<div class="mainDiv">  
 		<div id="container_0" class="viceDiv_1">  
 		</div>  
 		<div id="container_1" class="viceDiv_2">  
 		</div>  
 		<div id="container_2" class="viceDiv_3">  
 		</div>  
-	</div>  -->
+	</div> 
 
 	<script type="text/javascript">
 
@@ -129,10 +130,8 @@
 							{
 								left: '10%',
 								right: '10%',
-								bottom: 200
-							},{
-							bottom: 80
-							},
+								bottom: '10%',
+							}
 						],
 						dataZoom: [{
 							textStyle: {
@@ -243,8 +242,8 @@
 
 
 		draw_stock("CARR", "container_0");
-		draw_stock("PDD", "container_1");
-		draw_stock("IBM", "container_2");
+		//draw_stock("PDD", "container_1");
+		//draw_stock("IBM", "container_2");
 
 	</script>
 </body>
