@@ -35,22 +35,36 @@
 </style>
 
 <body>
+	<h1>PDD</h1>
 	<div id="Kline-div" class="Kline-div">
 		<div id="m-line" class="m-line"></div>
 		<div id="k-content" class="K-line"></div>
 	</div>
-	<script src="js/jquery-3.3.1.min.js"></script>
+	<script src="https://libs.baidu.com/jquery/2.0.0/jquery.js"></script>
 	<script src="js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/tmpData.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/k-line.js" type="text/javascript" charset="utf-8"></script>
 	<script>
+		//////////////////////////////////////
+		// M chart (minutes)
 		var mChart = echarts.init(document.getElementById('m-line'));
-		var mdata = conv_data(mdata_my, "TIME_SERIES_INTRADAY") ;
-		mChart.setOption(initMOption(mdata, 'us'));
+		var data_ori = get_api_data("PDD","TIME_SERIES_INTRADAY",mChart,);
+		//var mdata = conv_data(data_ori, "TIME_SERIES_INTRADAY") ;
+		//mChart.setOption(initMOption(mdata, 'us'));
+		mChart.getZr().on('click', function(param) {
+			window.open('./index.html','_parent');
+		});
 
+		/////////////////////////////////////
+		// K chart (day)
 		var kChart = echarts.init(document.getElementById('k-content'));
-		var kdata = conv_data(kdata_my, "TIME_SERIES_DAILY") ;
-		kChart.setOption(initKOption(kdata)); 
+		var data_ori = get_api_data("PDD","TIME_SERIES_DAILY", kChart);
+		//var kdata = conv_data(data_ori, "TIME_SERIES_DAILY") ;
+		//kChart.setOption(initKOption(kdata)); 
+		kChart.getZr().on('click', function(param) {
+			window.open('./index.html','_parent');
+		});
+
 	</script>
 </body>
 

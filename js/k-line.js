@@ -9,6 +9,61 @@ var ma20Color = "#ffab42";
 var ma30Color = "#00940b";
 
 /**
+ * Get API data from site
+ * @param {String} stock_name 
+ * @param {String} data_type
+ */
+function get_api_data(stock_name, data_type, echart_in){ 
+	var data_out;
+
+	// https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=CARR&interval=5min&apikey=SS1QJFRG4UC64DZP
+	var url_head = "https://www.alphavantage.co/query?function=";
+	//var url_CFG_FUNC = "TIME_SERIES_INTRADAY";
+	var url_CFG_FUNC = data_type;
+	var url_str_symbole = "&symbol=";
+	var url_CFG_SYMBOLE = stock_name;
+	var url_tail = "&outputsize=full&apikey=SS1QJFRG4UC64DZP";
+
+	if (url_CFG_FUNC == "TIME_SERIES_DAILY") {
+		var url_text = url_head + url_CFG_FUNC + url_str_symbole + url_CFG_SYMBOLE + url_tail;
+		
+	}
+	if (url_CFG_FUNC == "TIME_SERIES_INTRADAY") {
+		var url_text = url_head + url_CFG_FUNC + url_str_symbole + url_CFG_SYMBOLE + '&interval=5min' + url_tail;
+	}
+
+	$.ajax({
+		type: 'GET',
+		dataType: 'JSON',
+		url: url_text,
+		async: true,
+		success: function (result) {
+			success_function(echart_in, result, url_CFG_FUNC);
+			data_out = result;
+		}
+	});
+	return data_out ;
+}
+
+
+function success_function(echart_in, data_in, url_CFG_FUNC_in){
+	switch(url_CFG_FUNC_in){
+	case "TIME_SERIES_INTRADAY":
+		var mdata = conv_data(data_in, url_CFG_FUNC_in) ;
+		echart_in.setOption(initMOption(mdata, 'us'));
+		break;
+
+	case "TIME_SERIES_DAILY":
+		var kdata = conv_data(data_in, url_CFG_FUNC_in) ;
+		echart_in.setOption(initKOption(kdata)); 
+		break;
+		
+	default:
+		console.log("Sorry, we are out of limit access");
+	}
+}
+
+/**
  * 15:20 时:分 格式时间增加num分钟
  * @param {Object} time 起始时间
  * @param {Object} num
@@ -115,7 +170,7 @@ function conv_data(data_in, url_CFG_FUNC) {
 			];
 			data_out.push(data_line);
 		};
-		data_out = {data: data_out, yestclose:  parseFloat(data_in[data_text][data_index_list[0]]["4. close"])}
+		data_out = {data: data_out.reverse(), yestclose:  parseFloat(data_in[data_text][data_index_list[0]]["4. close"])}
 	}
 	////////////////////////////////////////////////////////
 	//k data
@@ -134,6 +189,7 @@ function conv_data(data_in, url_CFG_FUNC) {
 			];
 			data_out.push(data_line);
 		};
+		data_out = data_out.reverse();
 	}
 
 	return data_out;
