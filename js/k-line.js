@@ -136,11 +136,15 @@ var get_m_data = function(m_data,type) {
 	var priceArr = new Array();
 	var avgPrice = new Array();
 	var vol = new Array();
-	var times = time_arr(type); 
+	//var times = time_arr(type); 
+	var times = new Array();
+
+
 	$.each(m_data.data, function(i, v) {
 		priceArr.push(v[1]);
 		avgPrice.push(v[2]);
 		vol.push(v[3]); 
+		times.push(v[0]);
 	})
 	return {
 		priceArr: priceArr,
@@ -159,16 +163,30 @@ function conv_data(data_in, url_CFG_FUNC) {
 	if (url_CFG_FUNC == "TIME_SERIES_INTRADAY") {
 		data_text = "Time Series (5min)";
 		var data_index_list = [];
+		var latest_refresh_time = data_in["Meta Data"]["3. Last Refreshed"].slice(0,10);
+		
+		var s = latest_refresh_time + " 09:30"
+		s = s.replace(/-/g,"/");
+		var Obj_start_time = new Date(s);
+
+		var s = latest_refresh_time + " 16:00"
+		s = s.replace(/-/g,"/");
+		var Obj_stop_time = new Date(s);
+
 		for (var x in data_in[data_text]) {
-			var data_line = [];
-			data_index_list.push(x);
-			data_line =
-				[x.substr(11,2).concat(x.substr(14,2))
-				, parseFloat(data_in[data_text][x]["4. close"])
-				, 0.5*(parseFloat(data_in[data_text][x]["3. low"])+parseFloat(data_in[data_text][x]["2. high"]))
-				,parseFloat(data_in[data_text][x]["5. volume"])
-			];
-			data_out.push(data_line);
+			var s = x.replace(/-/g,"/");
+			var Obj_time = new Date(s);
+
+			if (Obj_time >= Obj_start_time && Obj_time <= Obj_stop_time){
+				data_index_list.push(x);
+				var data_line =
+					[x.substr(11,2).concat(x.substr(14,2))
+					, parseFloat(data_in[data_text][x]["4. close"])
+					, 0.5*(parseFloat(data_in[data_text][x]["3. low"])+parseFloat(data_in[data_text][x]["2. high"]))
+					,parseFloat(data_in[data_text][x]["5. volume"])
+				];
+				data_out.push(data_line);
+			};
 		};
 		data_out = {data: data_out.reverse(), yestclose:  parseFloat(data_in[data_text][data_index_list[0]]["4. close"])}
 	}
