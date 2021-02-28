@@ -48,7 +48,7 @@
 		//////////////////////////////////////
 		// M chart (minutes)
 		var mChart = echarts.init(document.getElementById('m-line'));
-		var data_ori = get_api_data("PDD","TIME_SERIES_INTRADAY",mChart,);
+		var data_ori = get_api_data("PDD","TIME_SERIES_INTRADAY",mChart);
 		//var mdata = conv_data(data_ori, "TIME_SERIES_INTRADAY") ;
 		//mChart.setOption(initMOption(mdata, 'us'));
 		mChart.getZr().on('click', function(param) {
